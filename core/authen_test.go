@@ -1,6 +1,7 @@
 package core
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,10 +14,8 @@ var (
 
 func init() {
 	var (
-		// testID     = os.Getenv("TEST_FEISHU_APPID")
-		// testSecret = os.Getenv("TEST_FEISHU_APPSECRET")
-		testID     = "cli_9f97971cd7a9d00c"
-		testSecret = "h3hw9uBnKuK37kY9sGwir1oGDCxdmPFq"
+		testID     = os.Getenv("TEST_FEISHU_APPID")
+		testSecret = os.Getenv("TEST_FEISHU_APPSECRET")
 	)
 	testCli = New(testID, testSecret, nil)
 	if testID != "" && testSecret != "" {
@@ -25,8 +24,18 @@ func init() {
 }
 
 func TestAuthen(t *testing.T) {
-	at, err := testCli.GetInternalAppAccessToken()
-	assert.Nil(t, err)
+	if skip {
+		return
+	}
+	{
+		at, err := testCli.GetInternalAppAccessToken()
+		assert.Nil(t, err)
+		t.Logf("%v", at)
+	}
+	{
+		at, err := testCli.GetInternalTenantAccessToken()
+		assert.Nil(t, err)
+		t.Logf("%v", at)
+	}
 
-	t.Logf("%v", at)
 }
