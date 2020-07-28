@@ -37,8 +37,8 @@ func New(appID, appSecret string, cache cachepkg.Cache) *Context {
 	return c
 }
 
-// Post .
-func (c *Context) Post(url string, body, ret interface{}) error {
+// postWithoutAuthen .
+func (c *Context) postWithoutAuthen(url string, body, ret interface{}) error {
 	buf := new(bytes.Buffer)
 	err := json.NewEncoder(buf).Encode(body)
 	if err != nil {
@@ -46,6 +46,34 @@ func (c *Context) Post(url string, body, ret interface{}) error {
 	}
 
 	resp, err := c.httpCli.Post(url, "application/json", buf)
+	if err != nil {
+		return err
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(ret)
+	if err != nil {
+		logrus.Errorf("decode body to %T failed, %s", ret, err)
+		return err
+	}
+	return nil
+}
+
+// Post .
+func (c *Context) Post(url, tkn string, body, ret interface{}) error {
+	buf := new(bytes.Buffer)
+	err := json.NewEncoder(buf).Encode(body)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", url, buf)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+tkn)
+	resp, err := c.httpCli.Do(req)
 	if err != nil {
 		return err
 	}

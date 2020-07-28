@@ -28,7 +28,7 @@ func (c *Context) GetInternalAppAccessToken() (string, error) {
 			Expire int64 `json:"expire"`
 		}
 	)
-	err := c.Post(uriGetInternalAppAccessToken, reqBody, &ret)
+	err := c.postWithoutAuthen(uriGetInternalAppAccessToken, reqBody, &ret)
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +58,7 @@ func (c *Context) GetInternalTenantAccessToken() (string, error) {
 			Expire int64 `json:"expire"`
 		}
 	)
-	err := c.Post(uriGetInternalTenantAccessToken, reqBody, &ret)
+	err := c.postWithoutAuthen(uriGetInternalTenantAccessToken, reqBody, &ret)
 	if err != nil {
 		return "", err
 	}
