@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -73,6 +74,42 @@ func (c *Context) Post(url, tkn string, body, ret interface{}) error {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+tkn)
+	resp, err := c.httpCli.Do(req)
+	if err != nil {
+		return err
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(ret)
+	if err != nil {
+		logrus.Errorf("decode body to %T failed, %s", ret, err)
+		return err
+	}
+	return nil
+}
+
+// Get .
+func (c *Context) Get(rurl, tkn string, query url.Values, ret interface{}) error {
+	u, err := url.Parse(rurl)
+	if err != nil {
+		return err
+	}
+
+	q := u.Query()
+	for k, vv := range query {
+		for _, v := range vv {
+			q.Add(k, v)
+		}
+	}
+	u.RawQuery = q.Encode()
+
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return err
+	}
+
+	if tkn != "" {
+		req.Header.Set("Authorization", "Bearer "+tkn)
+	}
 	resp, err := c.httpCli.Do(req)
 	if err != nil {
 		return err
