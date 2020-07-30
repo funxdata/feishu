@@ -8,8 +8,10 @@ import (
 
 const (
 	uriBatchGetUser = "https://open.feishu.cn/open-apis/contact/v1/user/batch_get"
+	uriListUserDept = "https://open.feishu.cn/open-apis/contact/v1/department/user/list"
 )
 
+// Value .
 type Value struct {
 	Value string `json:"value"`
 }
@@ -82,41 +84,17 @@ type UserInfo struct {
 // ListUsersEmpIDs 批量获取用户信息
 // Docs. https://open.feishu.cn/document/ukTMukTMukTM/uIzNz4iM3MjLyczM
 func (f *FeishuContact) ListUsersEmpIDs(empIDs ...string) ([]*UserInfo, error) {
-	if len(empIDs) == 0 {
-		return []*UserInfo{}, nil
-	}
-	tkn, err := f.GetInternalAppAccessToken()
-	if err != nil {
-		return nil, err
-	}
-
-	uq := make(url.Values)
-	for _, id := range empIDs {
-		uq.Add("employee_ids", id)
-	}
-
-	var ret struct {
-		core.FeishuResponse
-		Data struct {
-			UserInfos []*UserInfo `json:"user_infos"`
-		} `json:"data"`
-	}
-	err = f.Get(uriBatchGetUser, tkn, uq, &ret)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := ret.Err(); err != nil {
-		return nil, err
-	}
-
-	return ret.Data.UserInfos, nil
+	return f.listUsers("employee_ids", empIDs)
 }
 
 // ListUsersOpenIDs 批量获取用户信息
 // Docs. https://open.feishu.cn/document/ukTMukTMukTM/uIzNz4iM3MjLyczM
 func (f *FeishuContact) ListUsersOpenIDs(openIDs ...string) ([]*UserInfo, error) {
-	if len(openIDs) == 0 {
+	return f.listUsers("open_ids", openIDs)
+}
+
+func (f *FeishuContact) listUsers(idType string, ids []string) ([]*UserInfo, error) {
+	if len(ids) == 0 {
 		return []*UserInfo{}, nil
 	}
 	tkn, err := f.GetInternalAppAccessToken()
@@ -125,8 +103,8 @@ func (f *FeishuContact) ListUsersOpenIDs(openIDs ...string) ([]*UserInfo, error)
 	}
 
 	uq := make(url.Values)
-	for _, id := range openIDs {
-		uq.Add("open_ids", id)
+	for _, id := range ids {
+		uq.Add(idType, id)
 	}
 
 	var ret struct {
