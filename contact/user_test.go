@@ -7,6 +7,9 @@ import (
 )
 
 func TestListUsers(t *testing.T) {
+	if skip {
+		return
+	}
 	scopes, err := testCli.GetScope()
 	assert.Nil(t, err)
 	{
