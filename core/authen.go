@@ -1,6 +1,8 @@
 package core
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	cacheKeyAppAccessToken    = "feishu_app_access_token_"
