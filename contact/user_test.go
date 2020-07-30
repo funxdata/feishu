@@ -10,8 +10,8 @@ func TestListUsers(t *testing.T) {
 	scopes, err := testCli.GetScope()
 	assert.Nil(t, err)
 	{
-		t.Logf("openids: %v", scopes["authed_open_ids"])
-		list, err := testCli.ListUsersOpenIDs(scopes["authed_open_ids"]...)
+		t.Logf("openids: %v", scopes.OpenIDs)
+		list, err := testCli.ListUsersOpenIDs(scopes.OpenIDs...)
 		assert.Nil(t, err)
 		t.Logf("%v", list)
 		for _, v := range list {
@@ -19,8 +19,8 @@ func TestListUsers(t *testing.T) {
 		}
 	}
 	{
-		t.Logf("openids: %v", scopes["authed_employee_ids"])
-		list, err := testCli.ListUsersEmpIDs(scopes["authed_employee_ids"]...)
+		t.Logf("openids: %v", scopes.EmployeeIDs)
+		list, err := testCli.ListUsersEmpIDs(scopes.EmployeeIDs...)
 		assert.Nil(t, err)
 		t.Logf("%v", list)
 	}
