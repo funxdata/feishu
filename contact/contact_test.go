@@ -73,3 +73,21 @@ func TestListDepartmentUsers(t *testing.T) {
 		}
 	}
 }
+
+func TestListDepartmentUserDetails(t *testing.T) {
+	if skip {
+		return
+	}
+	{
+		opt := &ListDepartmentUsersOption{
+			FetchChild: true,
+		}
+		t.Logf("openids: %v", opt)
+		list, err := testCli.ListDepartmentUserDetails(opt)
+		assert.Nil(t, err)
+		t.Logf("%v", list)
+		for _, v := range list.UserList {
+			t.Logf("user_info: %v", v)
+		}
+	}
+}

@@ -8,7 +8,6 @@ import (
 
 const (
 	uriBatchGetUser = "https://open.feishu.cn/open-apis/contact/v1/user/batch_get"
-	uriListUserDept = "https://open.feishu.cn/open-apis/contact/v1/department/user/list"
 )
 
 // Value .
